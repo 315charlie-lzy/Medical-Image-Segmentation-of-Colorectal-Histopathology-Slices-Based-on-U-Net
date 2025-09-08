@@ -43,86 +43,22 @@
 * **定量**：在 GlaS 的验证与测试划分上，IoU / F1 相比基线（U-Net / KiU-Net）呈**稳定提升趋势**（详见项目中的表格与日志）。
 * **可视化**：在边界贴合度、腺体整体形态保持以及细丝状结构的连贯性方面，**myKiU-Net** 的预测更接近标注；在 **RITE** 上的扩展实验也显示出良好的**跨数据集泛化**。
 
-> 说明：由于 PPT 中主要展示对比图与条形图，本仓库附带复现实验脚本以便你在本地复算并导出完整表格。
-
-## 📦 Quick Start
-
-```bash
-# 1) 环境（示例）
-conda create -n mykiunet python=3.10 -y
-conda activate mykiunet
-pip install -r requirements.txt   # 将包含 pytorch/torchvision、einops、opencv-python 等
-
-# 2) 数据准备
-# datasets/
-#   └── GlaS/
-#       ├── images/ (原图)
-#       └── masks/  (像素级标签, 二类：gland/background)
-# 运行脚本会自动 resize 到 128x128 并按 train/val/test 划分
-
-# 3) 训练（示例）
-python train.py \
-  --dataset glas \
-  --img-size 128 \
-  --model mykiunet \
-  --loss combo \
-  --pooling hartley \
-  --act hardelish \
-  --use-attn-gate \
-  --use-residual \
-  --use-dense
-
-# 4) 评估
-python eval.py --dataset glas --checkpoint runs/best.ckpt
-
-# 5) 推理
-python infer.py --image path/to/sample.png --checkpoint runs/best.ckpt --save out.png
-```
-
-## 🗂️ Repo 结构（建议）
-
-```
-mykiunet/
-├── models/
-│   ├── unet.py
-│   ├── kiunet.py
-│   └── mykiunet.py            # 光谱池化/ELiSH/Attention/Residual/Dense 可开关
-├── layers/
-│   ├── hartley_pool.py        # Hartley 光谱池化
-│   ├── activations.py         # ELiSH / HardELiSH
-│   └── crfb.py                # 跨层融合（CRFB）与注意力门
-├── losses/
-│   └── combo_loss.py
-├── datasets/
-│   └── glas.py
-├── train.py  ─ eval.py ─ infer.py
-├── requirements.txt
-└── README.md
-```
-
-## 🔬 指标定义（备忘）
+## 🔬 指标定义
 
 * **IoU**：预测与真值区域的交并比。
 * **F1-score**：精确率与召回率的调和均值。
 
 > 两者对前景/背景不均衡更敏感，能更好反映腺体边界与小目标质量。
 
-## 🗺️ 路线图（Roadmap）
-
-* [ ] 引入**Transformer 编码器**以捕获更强的全局依赖（与当前轻量模块组合）。
-* [ ] 更丰富的**组合损失**（如边界感知项 / Tversky / Dice 混合）。
-* [ ] 更高分辨率训练与多尺度推理。
-* [ ] 发布训练好的权重与可复现实验脚本。
 
 ## 🙏 Acknowledgments
 
-* **GlaS Challenge**（Gland Segmentation in Colon Histology Images）
-* **RITE**（Retinal Images vessel Tree Extraction）数据集
-* 基线模型：**U-Net / KiU-Net**（见项目内参考文献）
+* **GlaS Challenge**（Gland Segmentation in Colon Histology Images） :SIRINUKUNWATTANA K, PLUIM JosienP W, CHEN H, et al. Gland Segmentation in Colon Histology Images: The GlaS Challenge Contest[J]. arXiv: Computer Vision and Pattern Recognition,arXiv: Computer Vision and Pattern Recognition, 2016. 
+* **RITE**（Retinal Images vessel Tree Extraction）数据集 :HU Q, ABRÀMOFF M D, GARVIN M K. Automated Separation of Binary Overlapping Trees in Low-Contrast Color Retinal Images[M/OL]. Advanced Information Systems Engineering,Lecture Notes in Computer Science. 2013: 436-443. 
+* 基线模型:
+**U-Net**:RONNEBERGER O, FISCHER P, BROX T. U-Net: Convolutional Networks for Biomedical Image Segmentation[J]. Lecture Notes in Computer Science,Lecture Notes in Computer Science, 2015.
+**KiU-Net**:VALANARASU J M J, SINDAGI V A, HACIHALILOGLU I, et al. KiU-Net: Overcomplete Convolutional Architectures for Biomedical Image and Volumetric Segmentation[J/OL]. IEEE Transactions on Medical Imaging, 2022: 965-976. 
 
-## 📄 License
-
-建议使用 **MIT** 或 **Apache-2.0**（根据你所在单位与数据许可选择）。
 
 ## 📚 引用（示例）
 
